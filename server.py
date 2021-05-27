@@ -75,7 +75,7 @@ server_socket.settimeout(60)
 server_socket.bind(("127.0.0.1", 1234))
 seq_flag = 0
 words = []
-error_simulation = True
+error_simulation = False
 
 # Handshaking:
 count = 0
@@ -128,7 +128,7 @@ while True:
 
 seq_flag, client_message = receive(seq_flag, addr)
 exit_msg = "Your rival left the game!"
-if (client_message == 'Time is up! You won!') or (client_message == exit_msg):
+if (client_message == 'Time is up! YOU WON!') or (client_message == exit_msg):
     print(client_message)
     sys.exit()
 words.append(client_message)
@@ -166,7 +166,7 @@ while True:
         time_left = time_left - time_spent
         if time_left <= 0:
             print("time is up! You lost :/")
-            message = "Time is up! You won!"
+            message = "Time is up! YOU WON!"
             send_packet(addr, message, seq_flag)
             ack = wait_ack()
             if ack:

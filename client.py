@@ -111,7 +111,7 @@ while True:
         time_left = time_left - time_spent
         if time_left <= 0:
             print("time is up! you lost :/")
-            message = "Time is up! You won!"
+            message = "Time is up! YOU WON!"
             send_packet(message, seq_flag)
             ack = wait_ack()
             if ack:
