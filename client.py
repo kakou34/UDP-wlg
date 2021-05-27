@@ -23,6 +23,7 @@ def wait_ack():
         message = data.decode()
         return message == "ACK"
     except socket.timeout as e:
+        print("TIMEOUT ERROR!")
         return False
 
 
@@ -49,6 +50,7 @@ def receive(seq_flag):
     except socket.timeout as e:
         print("TIMEOUT ERROR! Your rival is not responding!")
         send_ack(SERVER, False)
+        sys.exit()
 
 
 def send_packet(msg, seq):

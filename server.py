@@ -24,6 +24,7 @@ def wait_ack():
         message = data.decode()
         return message == "ACK"
     except socket.timeout as e:
+        print("TIMEOUT ERROR!")
         return False
 
 
@@ -77,25 +78,33 @@ words = []
 error_simulation = True
 
 # Handshaking:
-while True:
-    print('Waiting for the client...')
-    data, addr = server_socket.recvfrom(1024)
-    rec_packet = data.decode()
-    rec_packet = rec_packet.split(',')
-    seq = int(rec_packet[0])
-    exp_checksum = rec_packet[1]
-    msg = rec_packet[2]
-    checksum = get_checksum(msg)
-    if checksum != exp_checksum:
-        send_ack(addr, False)
-        print("CHECKSUM ERROR!\nChecksums are different. Please restart the game!")
-        sys.exit()
-    if seq != seq_flag:
-        send_ack(addr, False)
-        print("ORDER ERROR!\nSequences are different. Please restart the game!")
-        sys.exit()
-    if msg == 'CONNECT':
-        break
+count = 0
+print('Waiting for the client...')
+while count < 5:
+    try:
+        data, addr = server_socket.recvfrom(1024)
+        rec_packet = data.decode()
+        rec_packet = rec_packet.split(',')
+        seq = int(rec_packet[0])
+        exp_checksum = rec_packet[1]
+        msg = rec_packet[2]
+        checksum = get_checksum(msg)
+        if checksum != exp_checksum:
+            send_ack(addr, False)
+            print("CHECKSUM ERROR!\nChecksums are different. Please restart the game!")
+            sys.exit()
+        if seq != seq_flag:
+            send_ack(addr, False)
+            print("ORDER ERROR!\nSequences are different. Please restart the game!")
+            sys.exit()
+        if msg == 'CONNECT':
+            break
+    except socket.timeout as e:
+        print("Timeout error! trying again...")
+        count += 1
+if count >= 5:
+    print("TIMEOUT ERROR! No client connection received, Please try again...")
+    sys.exit()
 
 
 send_ack(addr, True)
